@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AURA AI STUDIO</title>
+<style>
+body{margin:0;background:#090d18;color:white;font-family:Arial,sans-serif}
+header{padding:22px;background:#15172b;border-bottom:2px solid #8b5cf6}
+h1{color:#bda5ff;margin:0}
+main{max-width:850px;margin:auto;padding:18px}
+.card{background:#151c2d;border:1px solid #343d56;border-radius:15px;padding:18px;margin:15px 0}
+button{background:#8b5cf6;color:white;border:0;border-radius:8px;padding:12px;margin:5px 0}
+input,textarea,select{box-sizing:border-box;width:100%;padding:12px;margin:7px 0;background:#080d18;color:white;border:1px solid #47516b;border-radius:8px}
+textarea{min-height:90px}
+#preview img{width:90px;height:110px;object-fit:contain;margin:5px;background:#080d18}
+small{color:#b9c1d4}
+</style>
+</head>
+<body>
+<header>
+<h1>✦ AURA AI STUDIO</h1>
+<small>MANGA • MOTION • ANIME</small>
+</header>
+<main>
+<div class="card">
+<h2>Welcome to your Anime Studio</h2>
+<p>Turn your manga ideas into an organized anime production plan.</p>
+<p><small>This starter plans scenes and prompts. Actual AI video generation will need a video service.</small></p>
+</div>
+<div class="card">
+<h2>1. Project Setup</h2>
+<label>Project name</label>
+<input id="project" value="My Anime Episode">
+<label>Episode length</label>
+<select id="length">
+<option>1 minute</option><option>5 minutes</option>
+<option>10 minutes</option><option>20 minutes</option>
+<option>40 minutes</option><option selected>80 minutes</option>
+</select>
+<label>Animation workflow</label>
+<select id="mode"><option>Manga Motion</option><option>Full Anime</option></select>
+</div>
+<div class="card">
+<h2>2. Upload Manga Panels</h2>
+<input id="images" type="file" accept="image/*" multiple>
+<div id="preview"></div>
+</div>
+<div class="card">
+<h2>3. Scene and Voice-over</h2>
+<label>Scene description</label>
+<textarea id="scene" placeholder="Describe what happens in this scene"></textarea>
+<label>Hindi dialogue or narration</label>
+<textarea id="voice" placeholder="Yahan Hindi dialogue likho"></textarea>
+<label>Motion style</label>
+<select id="motion"><option>Cinematic camera movement</option><option>Gentle parallax</option><option>Dynamic action</option><option>Slow dramatic pan</option></select>
+<button onclick="makePrompt()">Create AI Video Prompt</button>
+<textarea id="output" placeholder="Your prompt will appear here" readonly></textarea>
+<button onclick="copyPrompt()">Copy Prompt</button>
+</div>
+<div class="card">
+<h2>4. Episode Planner</h2>
+<button onclick="plan()">Plan Scenes</button>
+<p id="status">No scenes planned yet.</p>
+<div id="timeline"></div>
+</div>
+</main>
+<script>
+let count=0;
+document.getElementById('images').addEventListener('change',function(){
+const area=document.getElementById('preview');
+for(const file of this.files){
+if(!file.type.startsWith('image/'))continue;
+const img=document.createElement('img');
+img.src=URL.createObjectURL(file);
+img.alt='Manga panel';
+area.appendChild(img);
+count++;
+}
+});
+function makePrompt(){
+document.getElementById('output').value=
+'Project: '+document.getElementById('project').value+
+'\nWorkflow: '+document.getElementById('mode').value+
+'\nMotion: '+document.getElementById('motion').value+
+'\nScene: '+document.getElementById('scene').value+
+'\nHindi dialogue: '+document.getElementById('voice').value+
+'\nKeep character designs consistent. Use cinematic lighting and smooth motion. Generate one scene at a time.';
+}
+function copyPrompt(){
+const box=document.getElementById('output');
+box.select();
+try{document.execCommand('copy');alert('Prompt selected or copied.')}
+catch(e){alert('Long-press the text and select Copy.')}
+}
+function plan(){
+const length=document.getElementById('length').value;
+const n=parseInt(length)||1;
+const scenes=n*4;
+document.getElementById('status').textContent=
+'Target: '+length+'. Planned scene slots: '+scenes+'. Uploaded panels: '+count+'. This is a plan, not rendered video.';
+const area=document.getElementById('timeline');
+area.textContent='';
+for(let i=1;i<=Math.min(scenes,100);i++){
+const p=document.createElement('p');
+p.textContent='Scene '+i+' — planned';
+area.appendChild(p);
+}
+}
+</script>
+</body>
+</html>
